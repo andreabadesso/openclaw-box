@@ -16,8 +16,8 @@ if [ -n "$BUILD_HOST" ]; then
     echo "Building on $BUILD_HOST..."
     # Copy flake to build host and run nixos-anywhere from there
     rsync -avz --exclude='.git' --exclude='deploy.log' ./ "$BUILD_HOST:~/nixos-deploy/"
-    ssh "$BUILD_HOST" "cd ~/nixos-deploy && nix run github:nix-community/nixos-anywhere -- --flake '.#clawdbot-server' root@$TARGET_IP"
+    ssh "$BUILD_HOST" "cd ~/nixos-deploy && nix run github:nix-community/nixos-anywhere -- --flake '.#clawd-box' root@$TARGET_IP"
 else
     # Build locally and deploy
-    nix run github:nix-community/nixos-anywhere -- --flake ".#clawdbot-server" "root@$TARGET_IP"
+    nix run github:nix-community/nixos-anywhere -- --flake ".#clawd-box" "root@$TARGET_IP"
 fi

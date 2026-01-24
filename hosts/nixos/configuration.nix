@@ -1,18 +1,17 @@
 { pkgs, ... }:
 
 {
-  networking.hostName = "clawdbot-server";
+  networking.hostName = "clawd-box";
   networking.networkmanager.enable = true;
 
   time.timeZone = "UTC";
   i18n.defaultLocale = "en_US.UTF-8";
 
-  # Generate with: mkpasswd -m sha-512
-  users.users.root.hashedPassword = "$6$example$xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx";
+  users.users.root.hashedPassword = "$6$9b864230cf8d8153$4wURMAQBj0yfFkv5.5.RUIFtbjkK6Jx9eSphnLSF16tRKXUboILRiWf7A1Jq/1gtKSqQHyMIhMH0kKrrqzIOR1";
 
   users.users.root.openssh.authorizedKeys.keys = [
-    # Add your SSH public key(s) here
-    # "ssh-ed25519 AAAA... your-key@example.com"
+    "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIEaT/b47r3sHQdrwhShHrw8XXVEaXN9WzQk5kOxu1y5R andre.abadesso@gmail.com"
+    "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIHR6yQ7mgE+2lVn04k04eWjErRwk5tacrT8euIvYdlgx opencode-deploy"
   ];
 
   services.openssh = {

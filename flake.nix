@@ -22,7 +22,7 @@
   };
 
   outputs = { self, nixpkgs, disko, home-manager, sops-nix, nix-clawdbot, ... }@inputs: {
-    nixosConfigurations.clawdbot-server = nixpkgs.lib.nixosSystem {
+    nixosConfigurations.clawd-box = nixpkgs.lib.nixosSystem {
       system = "x86_64-linux";
       specialArgs = { inherit inputs; };
       modules = [
