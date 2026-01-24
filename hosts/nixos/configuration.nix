@@ -7,12 +7,12 @@
   time.timeZone = "UTC";
   i18n.defaultLocale = "en_US.UTF-8";
 
-  # REPLACE: Generate with `mkpasswd -m sha-512`
-  users.users.root.hashedPassword = "<YOUR_HASHED_PASSWORD>";
+  # Generate with: mkpasswd -m sha-512
+  users.users.root.hashedPassword = "$6$example$xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx";
 
-  # REPLACE: Add your SSH public keys
   users.users.root.openssh.authorizedKeys.keys = [
-    "ssh-ed25519 AAAA... your-key@example.com"
+    # Add your SSH public key(s) here
+    # "ssh-ed25519 AAAA... your-key@example.com"
   ];
 
   services.openssh = {
