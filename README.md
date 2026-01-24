@@ -1,10 +1,10 @@
-# NixOS + Clawdbot Server
+# clawd-box
 
-Deploy a headless NixOS server running [Clawdbot](https://github.com/clawdbot/nix-clawdbot) using [nixos-anywhere](https://github.com/nix-community/nixos-anywhere).
+A ready-to-deploy NixOS server running [Clawdbot](https://github.com/clawdbot/nix-clawdbot), deployed via [nixos-anywhere](https://github.com/nix-community/nixos-anywhere).
 
 ## Overview
 
-This example shows how to:
+This project shows how to:
 - Deploy NixOS to a VM/server using nixos-anywhere (no ISO needed)
 - Run Clawdbot as a systemd user service on Linux
 - Use disko for declarative disk partitioning
@@ -20,8 +20,8 @@ This example shows how to:
 
 1. **Clone and customize:**
    ```bash
-   git clone https://github.com/youruser/nixos-clawdbot-example
-   cd nixos-clawdbot-example
+   git clone https://github.com/andreabadesso/clawd-box
+   cd clawd-box
    ```
 
 2. **Edit configuration:**
