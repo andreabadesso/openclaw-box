@@ -40,20 +40,18 @@
             imports = [ nix-clawdbot.homeManagerModules.clawdbot ];
             programs.clawdbot = {
               enable = true;
-              # Configure your Clawdbot instance
               instances.default = {
                 enable = true;
                 agent = {
                   model = "anthropic/claude-sonnet-4-20250514";
                   thinkingDefault = "medium";
                 };
-                # Uncomment and configure providers:
-                # providers.telegram = {
-                #   enable = true;
-                #   botTokenFile = "/run/secrets/telegram_bot_token";
-                #   allowFrom = [ 123456789 ]; # Your Telegram user ID
-                # };
-                # providers.anthropic.apiKeyFile = "/run/secrets/anthropic_api_key";
+                providers.telegram = {
+                  enable = true;
+                  botTokenFile = "/run/secrets/telegram_bot_token";
+                  allowFrom = [ 35767074 ];
+                };
+                providers.anthropic.apiKeyFile = "/run/secrets/anthropic_api_key";
               };
             };
             home.stateVersion = "25.11";

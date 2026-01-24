@@ -22,14 +22,12 @@
 
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
 
-  # Optional: sops-nix for secrets management
   sops = {
     defaultSopsFile = ./secrets/secrets.yaml;
-    validateSopsFiles = false;
     age.sshKeyPaths = [ "/etc/ssh/ssh_host_ed25519_key" ];
     secrets = {
-      # anthropic_api_key = {};
-      # telegram_bot_token = {};
+      anthropic_api_key = {};
+      telegram_bot_token = {};
     };
   };
 

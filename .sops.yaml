@@ -1,0 +1,4 @@
+creation_rules:
+  - path_regex: hosts/nixos/secrets/.*\.yaml$
+    pgp: 803D4E39E949D046FBE317B2580C90EDA4105A7A
+    age: age13qgn3zejvs8eaejt7u7dz3gfc0dcvga2uuue26g3z645cweynuaqszyz64
