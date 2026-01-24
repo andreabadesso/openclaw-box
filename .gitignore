@@ -1,0 +1,17 @@
+# Deployment logs
+deploy.log
+
+# Unencrypted secrets (sops-encrypted files are OK to commit)
+*.unencrypted
+*.plain
+
+# Nix build outputs
+result
+result-*
+
+# Editor files
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
