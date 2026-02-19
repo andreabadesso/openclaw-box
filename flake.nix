@@ -11,8 +11,8 @@
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    nix-clawdbot = {
-      url = "github:clawdbot/nix-clawdbot";
+    nix-openclaw = {
+      url = "github:openclaw/nix-openclaw";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     sops-nix = {
@@ -21,7 +21,7 @@
     };
   };
 
-  outputs = { self, nixpkgs, disko, home-manager, sops-nix, nix-clawdbot, ... }@inputs:
+  outputs = { self, nixpkgs, disko, home-manager, sops-nix, nix-openclaw, ... }@inputs:
     let
       lib = nixpkgs.lib;
       loadConfig = import ./lib/load-config.nix { inherit lib; };
@@ -39,7 +39,7 @@
           name = boxName;
           value = nixpkgs.lib.nixosSystem {
             system = "x86_64-linux";
-            specialArgs = { inherit self inputs cfg nix-clawdbot; };
+            specialArgs = { inherit self inputs cfg nix-openclaw; };
             modules = [
               disko.nixosModules.disko
               sops-nix.nixosModules.sops
@@ -49,9 +49,9 @@
               ./modules/system.nix
               ./modules/users.nix
               ./modules/home/dev-tools.nix
-              ./modules/home/clawdbot.nix
+              ./modules/home/openclaw.nix
               {
-                nixpkgs.overlays = [ nix-clawdbot.overlays.default ];
+                nixpkgs.overlays = [ nix-openclaw.overlays.default ];
                 home-manager.useGlobalPkgs = true;
                 home-manager.useUserPackages = true;
               }

@@ -57,14 +57,13 @@ mcfly = true
 gitDelta = true
 htop = true
 
-[clawdbot]
+[openclaw]
 enable = true
-[clawdbot.agent]
+[openclaw.agents]
 model = "anthropic/claude-sonnet-4-20250514"
 thinkingDefault = "medium"
-[clawdbot.telegram]
-enable = true
-botTokenFile = "/run/secrets/telegram_bot_token"
+[openclaw.telegram]
+tokenFile = "/run/secrets/telegram_bot_token"
 allowFrom = [35767074]
-[clawdbot.anthropic]
-apiKeyFile = "/run/secrets/anthropic_api_key"
+[openclaw.env]
+ANTHROPIC_API_KEY = "/run/secrets/anthropic_api_key"

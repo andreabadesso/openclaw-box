@@ -40,19 +40,16 @@
 
   users = [];
 
-  clawdbot = {
+  openclaw = {
     enable = false;
-    agent = {
+    agents = {
       model = "anthropic/claude-sonnet-4-20250514";
       thinkingDefault = "medium";
     };
     telegram = {
-      enable = false;
-      botTokenFile = "";
+      tokenFile = "";
       allowFrom = [];
     };
-    anthropic = {
-      apiKeyFile = "";
-    };
+    env = {};
   };
 }
