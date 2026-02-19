@@ -9,7 +9,7 @@ This project shows how to:
 - Run OpenClaw as a systemd user service on Linux
 - Use disko for declarative disk partitioning
 - Manage secrets with sops-nix
-- Define multiple box configs via TOML files
+- Define multiple box configs via TOML files in isolated directories
 
 ## Prerequisites
 
@@ -27,27 +27,45 @@ This project shows how to:
 
 2. **Create your box config:**
    ```bash
-   cp boxes/example.toml boxes/default.toml
+   mkdir -p boxes/mybox/secrets
+   cp boxes/example.toml boxes/mybox/box.toml
    ```
-   Edit `boxes/default.toml` — hostname, SSH keys, users, OpenClaw settings, etc.
+   Edit `boxes/mybox/box.toml` — hostname, SSH keys, users, OpenClaw settings, etc.
 
-3. **Deploy:**
+3. **Set up secrets:**
    ```bash
-   # Deploy the "default" box, build locally:
-   ./deploy.sh <target-ip>
+   # Create .sops.yaml in your box directory
+   cat > boxes/mybox/.sops.yaml <<'EOF'
+   creation_rules:
+     - path_regex: secrets/.*\.yaml$
+       age: <your-age-public-key>
+   EOF
 
-   # Deploy a specific box:
-   ./deploy.sh <target-ip> staging
+   # Create and edit secrets
+   cd boxes/mybox
+   sops secrets/secrets.yaml
+   ```
+
+4. **Track your box for Nix (required — flakes only see git-tracked files):**
+   ```bash
+   git add -f boxes/mybox/
+   ```
+   The `.gitignore` prevents `git add .` from picking up box directories, but `-f` forces staging. Files stay staged locally and won't be pushed.
+
+5. **Deploy:**
+   ```bash
+   # Deploy the "mybox" box, build locally:
+   ./deploy.sh <target-ip> mybox
 
    # Build on a remote Linux host:
-   ./deploy.sh <target-ip> default user@<linux-build-host>
+   ./deploy.sh <target-ip> mybox user@<linux-build-host>
    ```
 
 ## Configuration
 
-All configuration lives in `boxes/*.toml` (gitignored — your boxes are personal). Each file generates a `nixosConfiguration` automatically — `boxes/default.toml` becomes `nixosConfigurations.default`, `boxes/staging.toml` becomes `nixosConfigurations.staging`, etc.
+Each box lives in its own directory under `boxes/` — `boxes/mybox/box.toml` generates `nixosConfigurations.mybox`. Box directories are gitignored so personal data (SSH keys, secrets) stays out of the repo.
 
-A tracked `boxes/example.toml` is provided as a starting template.
+A tracked `boxes/example.toml` is provided as a schema reference (it's a flat file, not a directory, so it's not scanned by the flake).
 
 ### TOML Config Example
 
@@ -72,8 +90,8 @@ to = 9999
 [docker]
 enable = true
 
+# Secrets auto-discovered at boxes/<name>/secrets/secrets.yaml
 [sops]
-defaultSopsFile = "hosts/nixos/secrets/secrets.yaml"
 ageKeyPaths = ["/etc/ssh/ssh_host_ed25519_key"]
 secrets = ["anthropic_api_key", "telegram_bot_token"]
 
@@ -100,60 +118,80 @@ htop = true
 [openclaw]
 enable = true
 [openclaw.agents]
-model = "anthropic/claude-sonnet-4-20250514"
+model = "kimi-coding/k2p5"
 thinkingDefault = "medium"
 [openclaw.telegram]
 tokenFile = "/run/secrets/telegram_bot_token"
 allowFrom = [123456789]  # Your Telegram user ID
 [openclaw.env]
-ANTHROPIC_API_KEY = "/run/secrets/anthropic_api_key"
+KIMI_API_KEY = "/run/secrets/kimi_api_key"
 ```
 
 ### Secrets with sops-nix
 
-1. Create secrets file:
-   ```bash
-   mkdir -p hosts/nixos/secrets
-   sops hosts/nixos/secrets/secrets.yaml
+Each box has its own `.sops.yaml` and secrets directory:
+
+```
+boxes/mybox/
+  box.toml
+  .sops.yaml          # Per-box age key config
+  secrets/
+    secrets.yaml       # Encrypted secrets
+```
+
+The sops file path is auto-derived — no need to set `defaultSopsFile` in your TOML config.
+
+1. Create your `.sops.yaml`:
+   ```yaml
+   creation_rules:
+     - path_regex: secrets/.*\.yaml$
+       age: <your-age-public-key>
    ```
 
-2. Add secrets:
+2. Create and edit secrets:
+   ```bash
+   cd boxes/mybox
+   sops secrets/secrets.yaml
+   ```
+
+3. Add secrets:
    ```yaml
    telegram_bot_token: "your-bot-token"
-   anthropic_api_key: "sk-ant-..."
+   kimi_api_key: "sk-..."
    ```
 
-3. Reference them in your TOML config:
+4. Reference them in your TOML config:
    ```toml
    [sops]
-   secrets = ["anthropic_api_key", "telegram_bot_token"]
+   secrets = ["kimi_api_key", "telegram_bot_token"]
    ```
 
 ## File Structure
 
 ```
 .
-├── flake.nix                      # Scans boxes/*.toml, generates nixosConfigurations
+├── flake.nix                      # Scans boxes/*/box.toml, generates nixosConfigurations
 ├── flake.lock
-├── deploy.sh                      # ./deploy.sh <ip> [box-name] [build-host]
+├── deploy.sh                      # ./deploy.sh <ip> <box-name> [build-host]
 ├── boxes/
-│   ├── example.toml               # Template (tracked) — copy to get started
-│   └── *.toml                     # Your box configs (gitignored)
+│   ├── example.toml               # Schema reference (tracked, not scanned)
+│   └── <name>/                    # Per-box directory (gitignored)
+│       ├── box.toml               # Box configuration
+│       ├── .sops.yaml             # Per-box age key
+│       └── secrets/
+│           └── secrets.yaml       # Encrypted secrets
 ├── lib/
 │   ├── defaults.nix               # Default values for all config fields
 │   └── load-config.nix            # TOML loader + deep merge with defaults
-├── modules/
-│   ├── disko.nix                  # Parameterized disk partitioning
-│   ├── hardware.nix               # Boot/kernel config
-│   ├── system.nix                 # System config (networking, packages, etc.)
-│   ├── users.nix                  # User creation from config
-│   └── home/
-│       ├── openclaw.nix           # OpenClaw home-manager setup for root
-│       ├── dev-tools.nix          # Per-user dev tools (git, tmux, fzf, etc.)
-│       └── tmux-config.nix        # Tmux theme and keybindings
-└── hosts/
-    └── nixos/
-        └── secrets/               # sops-nix encrypted secrets
+└── modules/
+    ├── disko.nix                  # Parameterized disk partitioning
+    ├── hardware.nix               # Boot/kernel config
+    ├── system.nix                 # System config (networking, packages, etc.)
+    ├── users.nix                  # User creation from config
+    └── home/
+        ├── openclaw.nix           # OpenClaw home-manager setup for root
+        ├── dev-tools.nix          # Per-user dev tools (git, tmux, fzf, etc.)
+        └── tmux-config.nix        # Tmux theme and keybindings
 ```
 
 ## After Deployment
@@ -172,20 +210,29 @@ journalctl --user -u openclaw-gateway -f
 
 ## Creating a New Box
 
-1. Copy `boxes/example.toml` to `boxes/mybox.toml`
-2. Customize hostname, SSH keys, users, etc.
-3. Deploy: `./deploy.sh <target-ip> mybox`
+1. Create the box directory:
+   ```bash
+   mkdir -p boxes/mybox/secrets
+   cp boxes/example.toml boxes/mybox/box.toml
+   ```
+2. Customize `box.toml` — hostname, SSH keys, users, etc.
+3. Set up `.sops.yaml` and secrets (see above)
+4. Track for Nix: `git add -f boxes/mybox/`
+5. Deploy: `./deploy.sh <target-ip> mybox`
 
 ## Troubleshooting
 
 ### Build fails on macOS
-Use a Linux build host: `./deploy.sh <target-ip> default user@<linux-build-host>`
+Use a Linux build host: `./deploy.sh <target-ip> mybox user@<linux-build-host>`
 
 ### VM gets different IP after kexec
 nixos-anywhere kexecs into an installer, which may get a different DHCP IP. Use `--phases disko,install,reboot` if you're already in the kexec environment.
 
 ### GRUB not installing
 For BIOS boot with GPT, ensure you have an EF02 partition and `boot.loader.grub.devices` is set correctly in `modules/hardware.nix`.
+
+### Nix can't find box.toml
+Nix flakes only see git-tracked files. Run `git add -f boxes/<name>/` to stage your box directory.
 
 ## License
 

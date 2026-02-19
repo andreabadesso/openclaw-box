@@ -26,8 +26,9 @@ enable = true
 enable = false
 authKeyFile = ""
 
+# Secrets are auto-discovered at boxes/<name>/secrets/secrets.yaml
+# Only override defaultSopsFile if you need a custom path
 [sops]
-defaultSopsFile = "hosts/nixos/secrets/secrets.yaml"
 ageKeyPaths = ["/etc/ssh/ssh_host_ed25519_key"]
 secrets = ["anthropic_api_key", "telegram_bot_token"]
 

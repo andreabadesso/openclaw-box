@@ -26,20 +26,27 @@
       lib = nixpkgs.lib;
       loadConfig = import ./lib/load-config.nix { inherit lib; };
 
-      # Scan boxes/*.toml and generate a nixosConfiguration for each
-      boxFiles = builtins.readDir ./boxes;
-      tomlFiles = lib.filterAttrs (name: type: type == "regular" && lib.hasSuffix ".toml" name) boxFiles;
+      # Scan boxes/ for directories containing box.toml
+      boxEntries = builtins.readDir ./boxes;
+      boxDirs = lib.filterAttrs (name: type: type == "directory") boxEntries;
 
-      mkSystem = filename:
+      mkSystem = boxName:
         let
-          boxName = lib.removeSuffix ".toml" filename;
-          cfg = loadConfig ./boxes/${filename};
+          cfg = loadConfig ./boxes/${boxName}/box.toml;
+          # Auto-derive sops path when not explicitly set
+          sopsFile =
+            if cfg.sops.defaultSopsFile != ""
+            then cfg.sops.defaultSopsFile
+            else "boxes/${boxName}/secrets/secrets.yaml";
+          finalCfg = cfg // {
+            sops = cfg.sops // { defaultSopsFile = sopsFile; };
+          };
         in
         {
           name = boxName;
           value = nixpkgs.lib.nixosSystem {
-            system = cfg.system;
-            specialArgs = { inherit self inputs cfg nix-openclaw; };
+            system = finalCfg.system;
+            specialArgs = { inherit self inputs nix-openclaw; cfg = finalCfg; };
             modules = [
               disko.nixosModules.disko
               sops-nix.nixosModules.sops
@@ -62,7 +69,7 @@
     in
     {
       nixosConfigurations = builtins.listToAttrs (
-        map mkSystem (builtins.attrNames tomlFiles)
+        map mkSystem (builtins.attrNames boxDirs)
       );
     };
 }

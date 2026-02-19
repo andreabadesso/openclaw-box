@@ -1,3 +1,3 @@
 creation_rules:
-  - path_regex: hosts/nixos/secrets/.*\.yaml$
+  - path_regex: secrets/.*\.yaml$
     age: age1lz2curmwtt9m86qrdtfgude2tntth3ar6v8p7xc7kdgay9fddy8sd89jg3

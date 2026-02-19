@@ -1,3 +1,6 @@
+# Box directories (personal configs with secrets)
+boxes/*/
+
 # Deployment logs
 deploy.log
 

@@ -32,7 +32,7 @@
   };
 
   sops = {
-    defaultSopsFile = "hosts/nixos/secrets/secrets.yaml";
+    defaultSopsFile = "";
     ageKeyPaths = [ "/etc/ssh/ssh_host_ed25519_key" ];
     secrets = [];
   };

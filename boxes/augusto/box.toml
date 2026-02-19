@@ -27,7 +27,6 @@ enable = false
 authKeyFile = ""
 
 [sops]
-defaultSopsFile = "hosts/nixos/secrets/secrets.yaml"
 ageKeyPaths = ["/etc/ssh/ssh_host_ed25519_key"]
 secrets = ["kimi_api_key", "telegram_bot_token"]
 
