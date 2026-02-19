@@ -1,12 +1,12 @@
-# clawd-box
+# openclaw-box
 
-A ready-to-deploy NixOS server running [Clawdbot](https://github.com/clawdbot/nix-clawdbot), deployed via [nixos-anywhere](https://github.com/nix-community/nixos-anywhere).
+A ready-to-deploy NixOS server running [OpenClaw](https://github.com/clawdbot/nix-clawdbot), deployed via [nixos-anywhere](https://github.com/nix-community/nixos-anywhere).
 
 ## Overview
 
 This project shows how to:
 - Deploy NixOS to a VM/server using nixos-anywhere (no ISO needed)
-- Run Clawdbot as a systemd user service on Linux
+- Run OpenClaw as a systemd user service on Linux
 - Use disko for declarative disk partitioning
 - Optionally manage secrets with sops-nix
 
@@ -20,13 +20,13 @@ This project shows how to:
 
 1. **Clone and customize:**
    ```bash
-   git clone https://github.com/andreabadesso/clawd-box
-   cd clawd-box
+   git clone https://github.com/andreabadesso/openclaw-box
+   cd openclaw-box
    ```
 
 2. **Edit configuration:**
    - `hosts/nixos/configuration.nix` - Add your SSH keys and set password
-   - `flake.nix` - Configure Clawdbot providers (Telegram, Anthropic API key, etc.)
+   - `flake.nix` - Configure OpenClaw providers (Telegram, Anthropic API key, etc.)
 
 3. **Deploy:**
    ```bash
@@ -39,9 +39,9 @@ This project shows how to:
 
 ## Configuration
 
-### Clawdbot Setup
+### OpenClaw Setup
 
-Edit `flake.nix` to configure your Clawdbot instance:
+Edit `flake.nix` to configure your OpenClaw instance:
 
 ```nix
 programs.clawdbot = {
@@ -88,7 +88,7 @@ programs.clawdbot = {
 
 ```
 .
-├── flake.nix                 # Main flake with Clawdbot config
+├── flake.nix                 # Main flake with OpenClaw config
 ├── flake.lock
 ├── deploy.sh                 # Deployment helper script
 ├── hosts/
@@ -102,7 +102,7 @@ programs.clawdbot = {
 
 ## After Deployment
 
-SSH into your server and check the Clawdbot service:
+SSH into your server and check the OpenClaw service:
 
 ```bash
 # Check service status
