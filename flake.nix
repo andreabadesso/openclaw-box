@@ -38,7 +38,7 @@
         {
           name = boxName;
           value = nixpkgs.lib.nixosSystem {
-            system = "x86_64-linux";
+            system = cfg.system;
             specialArgs = { inherit self inputs cfg nix-openclaw; };
             modules = [
               disko.nixosModules.disko

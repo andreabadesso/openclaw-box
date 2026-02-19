@@ -1,3 +1,4 @@
+system = "aarch64-linux"
 hostname = "openclaw-box"
 timezone = "UTC"
 locale = "en_US.UTF-8"

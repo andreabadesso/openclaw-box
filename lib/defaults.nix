@@ -2,6 +2,7 @@
   hostname = "openclaw";
   timezone = "UTC";
   locale = "en_US.UTF-8";
+  system = "x86_64-linux";
   stateVersion = "25.11";
 
   boot = {

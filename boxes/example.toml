@@ -1,3 +1,4 @@
+system = "x86_64-linux"  # or "aarch64-linux" for ARM (e.g. AWS Graviton)
 hostname = "openclaw-box"
 timezone = "UTC"
 locale = "en_US.UTF-8"
