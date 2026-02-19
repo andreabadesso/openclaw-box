@@ -3,9 +3,14 @@
 let
   openclawCfg = cfg.openclaw;
 
+  # Separate secret-backed env vars (paths starting with /) from literal values
+  isSecretPath = v: builtins.substring 0 1 v == "/";
+  secretEnvVars = lib.filterAttrs (_: v: isSecretPath v) openclawCfg.env;
+  literalEnvVars = lib.filterAttrs (_: v: !(isSecretPath v)) openclawCfg.env;
+
   # Build env var loading script from sops secret paths
   envExports = lib.concatStringsSep "\n" (
-    lib.mapAttrsToList (name: path: ''export ${name}="$(cat ${path})"'') openclawCfg.env
+    lib.mapAttrsToList (name: path: ''export ${name}="$(cat ${path})"'') secretEnvVars
   );
 
   gatewayWrapper = pkgs.writeShellScript "openclaw-gateway-start" ''
@@ -63,7 +68,7 @@ in
         Environment = [
           "HOME=/root"
           "NODE_ENV=production"
-        ];
+        ] ++ lib.mapAttrsToList (name: value: "${name}=${value}") literalEnvVars;
       };
     };
   };
