@@ -1,23 +1,23 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# Usage: ./deploy.sh <target-ip> [build-host]
+# Usage: ./deploy.sh <target-ip> [box-name] [build-host]
 #
 # Examples:
-#   ./deploy.sh 10.0.0.100                    # Build locally, deploy to target
-#   ./deploy.sh 10.0.0.100 user@10.0.0.50     # Build on remote host, deploy to target
+#   ./deploy.sh 10.0.0.100                        # Deploy "default" box, build locally
+#   ./deploy.sh 10.0.0.100 staging                 # Deploy "staging" box, build locally
+#   ./deploy.sh 10.0.0.100 default user@10.0.0.50  # Deploy "default" box, build on remote host
 
-TARGET_IP=${1:?Usage: ./deploy.sh <target-ip> [build-host]}
-BUILD_HOST=${2:-}
+TARGET_IP=${1:?Usage: ./deploy.sh <target-ip> [box-name] [build-host]}
+BOX_NAME=${2:-default}
+BUILD_HOST=${3:-}
 
-echo "Deploying NixOS to $TARGET_IP..."
+echo "Deploying NixOS box '$BOX_NAME' to $TARGET_IP..."
 
 if [ -n "$BUILD_HOST" ]; then
     echo "Building on $BUILD_HOST..."
-    # Copy flake to build host and run nixos-anywhere from there
     rsync -avz --exclude='.git' --exclude='deploy.log' ./ "$BUILD_HOST:~/nixos-deploy/"
-    ssh "$BUILD_HOST" "cd ~/nixos-deploy && nix run github:nix-community/nixos-anywhere -- --flake '.#openclaw-box' root@$TARGET_IP"
+    ssh "$BUILD_HOST" "cd ~/nixos-deploy && nix run github:nix-community/nixos-anywhere -- --flake '.#$BOX_NAME' root@$TARGET_IP"
 else
-    # Build locally and deploy
-    nix run github:nix-community/nixos-anywhere -- --flake ".#openclaw-box" "root@$TARGET_IP"
+    nix run github:nix-community/nixos-anywhere -- --flake ".#$BOX_NAME" "root@$TARGET_IP"
 fi

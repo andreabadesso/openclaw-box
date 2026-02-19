@@ -1,15 +1,17 @@
+{ cfg, ... }:
+
 {
   disko.devices = {
     disk = {
       main = {
-        device = "/dev/sda";
+        device = cfg.disk.device;
         type = "disk";
         content = {
           type = "gpt";
           partitions = {
             boot = {
               size = "1M";
-              type = "EF02"; # for grub MBR
+              type = "EF02";
             };
             root = {
               size = "100%";

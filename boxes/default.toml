@@ -1,0 +1,70 @@
+hostname = "openclaw-box"
+timezone = "UTC"
+locale = "en_US.UTF-8"
+stateVersion = "25.11"
+
+[disk]
+device = "/dev/sda"
+
+[swap]
+size = 4096
+
+[networking]
+ports = [22, 80, 443]
+[[networking.portRanges]]
+from = 3000
+to = 9999
+
+[docker]
+enable = true
+
+[tailscale]
+enable = false
+authKeyFile = ""
+
+[sops]
+defaultSopsFile = "hosts/nixos/secrets/secrets.yaml"
+ageKeyPaths = ["/etc/ssh/ssh_host_ed25519_key"]
+secrets = ["anthropic_api_key", "telegram_bot_token"]
+
+packages = []
+
+[root]
+sshKeys = [
+  "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIEaT/b47r3sHQdrwhShHrw8XXVEaXN9WzQk5kOxu1y5R andre.abadesso@gmail.com",
+  "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIHR6yQ7mgE+2lVn04k04eWjErRwk5tacrT8euIvYdlgx opencode-deploy",
+  "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIMh5PUo1BDe3MURD9g7EHO8OTq2bxerdAp2ICeYqy4CE andre@nixos",
+]
+
+[[users]]
+name = "openclaw"
+shell = "zsh"
+groups = ["wheel", "docker"]
+sshKeys = [
+  "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIEaT/b47r3sHQdrwhShHrw8XXVEaXN9WzQk5kOxu1y5R andre.abadesso@gmail.com",
+  "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIMh5PUo1BDe3MURD9g7EHO8OTq2bxerdAp2ICeYqy4CE andre@nixos",
+]
+[users.git]
+email = "andre.abadesso@gmail.com"
+name = "Andre Abadesso"
+signByDefault = false
+[users.devTools]
+enable = true
+tmux = true
+direnv = true
+fzf = true
+mcfly = true
+gitDelta = true
+htop = true
+
+[clawdbot]
+enable = true
+[clawdbot.agent]
+model = "anthropic/claude-sonnet-4-20250514"
+thinkingDefault = "medium"
+[clawdbot.telegram]
+enable = true
+botTokenFile = "/run/secrets/telegram_bot_token"
+allowFrom = [35767074]
+[clawdbot.anthropic]
+apiKeyFile = "/run/secrets/anthropic_api_key"
