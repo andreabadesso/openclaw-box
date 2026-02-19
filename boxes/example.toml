@@ -61,10 +61,10 @@ htop = true
 [openclaw]
 enable = true
 [openclaw.agents]
-model = "anthropic/claude-sonnet-4-20250514"
+model = "kimi-coding/k2p5"
 thinkingDefault = "medium"
 [openclaw.telegram]
 tokenFile = "/run/secrets/telegram_bot_token"
 allowFrom = [123456789]  # Your Telegram user ID
 [openclaw.env]
-ANTHROPIC_API_KEY = "/run/secrets/anthropic_api_key"
+KIMI_API_KEY = "/run/secrets/kimi_api_key"

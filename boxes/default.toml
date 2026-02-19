@@ -1,11 +1,11 @@
-system = "aarch64-linux"
+system = "x86_64-linux"
 hostname = "openclaw-box"
 timezone = "UTC"
 locale = "en_US.UTF-8"
 stateVersion = "25.11"
 
 [boot]
-mode = "efi"
+mode = "bios"
 
 [disk]
 device = "/dev/nvme0n1"
@@ -29,7 +29,7 @@ authKeyFile = ""
 [sops]
 defaultSopsFile = "hosts/nixos/secrets/secrets.yaml"
 ageKeyPaths = ["/etc/ssh/ssh_host_ed25519_key"]
-secrets = ["anthropic_api_key", "telegram_bot_token"]
+secrets = ["kimi_api_key", "telegram_bot_token"]
 
 packages = []
 
@@ -64,10 +64,10 @@ htop = true
 [openclaw]
 enable = true
 [openclaw.agents]
-model = "anthropic/claude-sonnet-4-20250514"
+model = "kimi-coding/k2p5"
 thinkingDefault = "medium"
 [openclaw.telegram]
 tokenFile = "/run/secrets/telegram_bot_token"
 allowFrom = [35767074]
 [openclaw.env]
-ANTHROPIC_API_KEY = "/run/secrets/anthropic_api_key"
+KIMI_API_KEY = "/run/secrets/kimi_api_key"

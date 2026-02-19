@@ -48,7 +48,7 @@
   openclaw = {
     enable = false;
     agents = {
-      model = "anthropic/claude-sonnet-4-20250514";
+      model = "kimi-coding/k2p5";
       thinkingDefault = "medium";
     };
     telegram = {
