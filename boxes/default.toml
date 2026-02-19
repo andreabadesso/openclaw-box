@@ -4,13 +4,13 @@ locale = "en_US.UTF-8"
 stateVersion = "25.11"
 
 [boot]
-mode = "bios"  # "bios" or "efi"
+mode = "efi"
 
 [disk]
-device = "/dev/sda"
+device = "/dev/nvme0n1"
 
 [swap]
-size = 4096  # MB, 0 to disable
+size = 4096
 
 [networking]
 ports = [22, 80, 443]
@@ -34,19 +34,22 @@ packages = []
 
 [root]
 sshKeys = [
-  "ssh-ed25519 AAAA... you@example.com",
+  "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIEaT/b47r3sHQdrwhShHrw8XXVEaXN9WzQk5kOxu1y5R andre.abadesso@gmail.com",
+  "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIHR6yQ7mgE+2lVn04k04eWjErRwk5tacrT8euIvYdlgx opencode-deploy",
+  "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIMh5PUo1BDe3MURD9g7EHO8OTq2bxerdAp2ICeYqy4CE andre@nixos",
 ]
 
 [[users]]
-name = "myuser"
+name = "openclaw"
 shell = "zsh"
 groups = ["wheel", "docker"]
 sshKeys = [
-  "ssh-ed25519 AAAA... you@example.com",
+  "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIEaT/b47r3sHQdrwhShHrw8XXVEaXN9WzQk5kOxu1y5R andre.abadesso@gmail.com",
+  "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIMh5PUo1BDe3MURD9g7EHO8OTq2bxerdAp2ICeYqy4CE andre@nixos",
 ]
 [users.git]
-email = "you@example.com"
-name = "Your Name"
+email = "andre.abadesso@gmail.com"
+name = "Andre Abadesso"
 signByDefault = false
 [users.devTools]
 enable = true
@@ -64,6 +67,6 @@ model = "anthropic/claude-sonnet-4-20250514"
 thinkingDefault = "medium"
 [openclaw.telegram]
 tokenFile = "/run/secrets/telegram_bot_token"
-allowFrom = [123456789]  # Your Telegram user ID
+allowFrom = [35767074]
 [openclaw.env]
 ANTHROPIC_API_KEY = "/run/secrets/anthropic_api_key"

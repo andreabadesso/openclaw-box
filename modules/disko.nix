@@ -1,5 +1,8 @@
 { cfg, ... }:
 
+let
+  isEfi = cfg.boot.mode == "efi";
+in
 {
   disko.devices = {
     disk = {
@@ -9,7 +12,16 @@
         content = {
           type = "gpt";
           partitions = {
-            boot = {
+            boot = if isEfi then {
+              size = "512M";
+              type = "EF00";
+              content = {
+                type = "filesystem";
+                format = "vfat";
+                mountpoint = "/boot";
+                mountOptions = [ "umask=0077" ];
+              };
+            } else {
               size = "1M";
               type = "EF02";
             };

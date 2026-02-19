@@ -1,7 +1,3 @@
-# User box configs (copy boxes/example.toml to get started)
-boxes/*.toml
-!boxes/example.toml
-
 # Deployment logs
 deploy.log
 

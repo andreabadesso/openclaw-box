@@ -4,6 +4,10 @@
   locale = "en_US.UTF-8";
   stateVersion = "25.11";
 
+  boot = {
+    mode = "bios"; # "bios" or "efi"
+  };
+
   disk = {
     device = "/dev/sda";
   };
