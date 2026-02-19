@@ -25,8 +25,11 @@ This project shows how to:
    cd openclaw-box
    ```
 
-2. **Edit configuration:**
-   - `boxes/default.toml` — hostname, SSH keys, users, OpenClaw settings, etc.
+2. **Create your box config:**
+   ```bash
+   cp boxes/example.toml boxes/default.toml
+   ```
+   Edit `boxes/default.toml` — hostname, SSH keys, users, OpenClaw settings, etc.
 
 3. **Deploy:**
    ```bash
@@ -42,7 +45,9 @@ This project shows how to:
 
 ## Configuration
 
-All configuration lives in `boxes/*.toml`. Each file generates a `nixosConfiguration` automatically — `boxes/default.toml` becomes `nixosConfigurations.default`, `boxes/staging.toml` becomes `nixosConfigurations.staging`, etc.
+All configuration lives in `boxes/*.toml` (gitignored — your boxes are personal). Each file generates a `nixosConfiguration` automatically — `boxes/default.toml` becomes `nixosConfigurations.default`, `boxes/staging.toml` becomes `nixosConfigurations.staging`, etc.
+
+A tracked `boxes/example.toml` is provided as a starting template.
 
 ### TOML Config Example
 
@@ -132,7 +137,8 @@ ANTHROPIC_API_KEY = "/run/secrets/anthropic_api_key"
 ├── flake.lock
 ├── deploy.sh                      # ./deploy.sh <ip> [box-name] [build-host]
 ├── boxes/
-│   └── default.toml               # Default box config
+│   ├── example.toml               # Template (tracked) — copy to get started
+│   └── *.toml                     # Your box configs (gitignored)
 ├── lib/
 │   ├── defaults.nix               # Default values for all config fields
 │   └── load-config.nix            # TOML loader + deep merge with defaults
@@ -166,7 +172,7 @@ journalctl --user -u openclaw-gateway -f
 
 ## Creating a New Box
 
-1. Copy `boxes/default.toml` to `boxes/mybox.toml`
+1. Copy `boxes/example.toml` to `boxes/mybox.toml`
 2. Customize hostname, SSH keys, users, etc.
 3. Deploy: `./deploy.sh <target-ip> mybox`
 
