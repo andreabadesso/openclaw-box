@@ -41,10 +41,6 @@ in
                 primary = openclawCfg.agents.model;
               };
               thinkingDefault = openclawCfg.agents.thinkingDefault;
-              mcp.servers = map (s: {
-                inherit (s) name command;
-                args = s.args or [];
-              }) openclawCfg.mcp.servers;
             };
             channels.telegram = {
               tokenFile = openclawCfg.telegram.tokenFile;

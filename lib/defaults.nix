@@ -51,9 +51,6 @@
       model = "kimi-coding/k2p5";
       thinkingDefault = "medium";
     };
-    mcp = {
-      servers = [];
-    };
     telegram = {
       tokenFile = "";
       allowFrom = [];
@@ -68,4 +65,10 @@
     };
     env = {};
   };
+
+  proxy = {
+    email = "";
+  };
+
+  containers = [];
 }

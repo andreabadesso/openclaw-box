@@ -55,6 +55,7 @@
               ./modules/hardware.nix
               ./modules/system.nix
               ./modules/users.nix
+              ./modules/containers.nix
               ./modules/home/dev-tools.nix
               ./modules/home/openclaw.nix
               {

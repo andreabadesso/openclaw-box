@@ -46,6 +46,17 @@ let
 
   mergeUser = user: deepMerge userDefaults user;
 
+  containerDefaults = {
+    name = "";
+    image = "";
+    port = 0;
+    domain = "";
+    volumes = [];
+    env = {};
+  };
+
+  mergeContainer = container: deepMerge containerDefaults container;
+
 in
 tomlPath:
   let
@@ -54,4 +65,5 @@ tomlPath:
   in
   merged // {
     users = map mergeUser merged.users;
+    containers = map mergeContainer merged.containers;
   }
