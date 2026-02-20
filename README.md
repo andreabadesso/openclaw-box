@@ -6,7 +6,7 @@
 
 NixOS + nixos-anywhere + TOML config = zero-touch provisioning.
 
-[Quick Start](#quick-start) &bull; [Configuration](#configuration) &bull; [Secrets](#secrets) &bull; [Deployment](#deployment) &bull; [Troubleshooting](#troubleshooting)
+[Quick Start](#quick-start) &bull; [Standalone Box](#standalone-box) &bull; [Configuration](#configuration) &bull; [Secrets](#secrets) &bull; [Deployment](#deployment) &bull; [Troubleshooting](#troubleshooting)
 
 </div>
 
@@ -31,6 +31,58 @@ Each machine ("box") is defined by a single TOML file. The Nix flake auto-discov
 - SSH key access to the target
 
 ## Quick Start
+
+There are two ways to use openclaw-box:
+
+1. **Standalone box** (recommended) — scaffold your own flake that consumes openclaw-box from GitHub
+2. **Monorepo** — clone this repo and add boxes under `boxes/`
+
+### Standalone Box
+
+The fastest way to get started. No cloning required.
+
+**1. Bootstrap**
+
+```bash
+mkdir mybox && cd mybox
+nix run github:andreabadesso/openclaw-box -- bootstrap
+```
+
+This scaffolds `flake.nix`, `box.toml`, `secrets/`, `.sops.yaml`, and `.gitignore`.
+
+**2. Configure**
+
+Edit `box.toml` with your hostname, SSH keys, users, and OpenClaw settings.
+
+**3. Set up secrets**
+
+Edit `.sops.yaml` with your age public key, then create your secrets:
+
+```bash
+sops secrets/secrets.yaml
+```
+
+**4. Init git** (flakes require a git repo)
+
+```bash
+git init && git add -A
+```
+
+**5. Deploy**
+
+```bash
+nix run .#deploy -- <target-ip>
+```
+
+**6. Update** (push config changes to a running box)
+
+```bash
+nix run .#update -- <target-ip>
+```
+
+### Monorepo
+
+If you prefer managing multiple boxes in a single repo:
 
 **1. Clone**
 
@@ -217,13 +269,21 @@ At deploy time, sops-nix decrypts secrets using the host's SSH ed25519 key and m
 
 ## Deployment
 
-### Basic
+### Standalone Box
 
 ```bash
-./deploy.sh <target-ip> mybox
+nix run .#deploy -- <target-ip>          # initial provisioning
+nix run .#update -- <target-ip>          # push config changes
 ```
 
-### With a Remote Build Host
+### Monorepo
+
+```bash
+./deploy.sh <target-ip> mybox           # initial provisioning
+./update.sh <target-ip> mybox           # push config changes
+```
+
+### With a Remote Build Host (monorepo)
 
 If you're on macOS or want to offload the build:
 
@@ -256,9 +316,11 @@ journalctl -u openclaw-gateway -f
 
 ```
 .
-├── flake.nix                 # Auto-discovers boxes/*/box.toml, generates nixosConfigurations
+├── flake.nix                 # Auto-discovers boxes/*/box.toml, exposes lib.mkBox + bootstrap app
 ├── flake.lock                # Pinned dependencies
+├── bootstrap.sh              # Scaffolds a standalone box directory
 ├── deploy.sh                 # ./deploy.sh <ip> <box> [build-host]
+├── update.sh                 # ./update.sh <ip> <box> [build-host]
 │
 ├── boxes/
 │   ├── example.toml          # Full schema reference (tracked in git)
@@ -270,13 +332,16 @@ journalctl -u openclaw-gateway -f
 │
 ├── lib/
 │   ├── defaults.nix          # Default values for all config fields
-│   └── load-config.nix       # TOML loader + deep merge
+│   ├── load-config.nix       # TOML loader + deep merge
+│   ├── mk-box.nix            # lib.mkBox — builds nixosConfigurations + deploy/update apps
+│   └── module-list.nix       # Shared NixOS module list (used by flake.nix and mk-box.nix)
 │
 └── modules/
     ├── disko.nix             # Disk partitioning (BIOS/EFI aware)
     ├── hardware.nix          # Boot loader + kernel config
     ├── system.nix            # Networking, SSH, packages, sops, docker, swap
     ├── users.nix             # User accounts from config
+    ├── containers.nix        # OCI containers with nginx reverse proxy
     └── home/
         ├── openclaw.nix      # OpenClaw gateway systemd service
         ├── dev-tools.nix     # Per-user dev tools (git, tmux, fzf, etc.)
@@ -302,7 +367,7 @@ Every box ships with: `curl`, `wget`, `htop`, `procps`, `git`, `vim`, `direnv`, 
 ## Troubleshooting
 
 **Build fails on macOS**
-Use a remote Linux build host: `./deploy.sh <ip> mybox user@linux-host`
+Set up a local Linux builder (e.g. [OrbStack](https://orbstack.dev/), nix-darwin `linux-builder`, or Docker) so nix can build x86_64-linux derivations locally. Alternatively, use a remote build host: `./deploy.sh <ip> mybox user@linux-host`
 
 **VM gets a different IP after kexec**
 nixos-anywhere kexecs into an installer that may get a new DHCP lease. Use `--phases disko,install,reboot` if you're already in the kexec environment.
