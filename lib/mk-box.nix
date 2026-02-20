@@ -57,9 +57,11 @@ boxSelf: boxDir:
         set -euo pipefail
         TARGET_IP=''${1:?Usage: update <target-ip>}
         echo "Updating NixOS box '${hostname}' at $TARGET_IP..."
-        nixos-rebuild switch \
+        NIX_SSHOPTS="-o StrictHostKeyChecking=no" \
+          nix shell nixpkgs#nixos-rebuild -c nixos-rebuild switch \
           --flake ".#${hostname}" \
-          --target-host "root@$TARGET_IP"
+          --target-host "root@$TARGET_IP" \
+          --use-remote-sudo
       '';
 
   in
