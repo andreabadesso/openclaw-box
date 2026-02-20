@@ -25,6 +25,9 @@
     let
       lib = nixpkgs.lib;
       loadConfig = import ./lib/load-config.nix { inherit lib; };
+      moduleList = import ./lib/module-list.nix {
+        inherit self disko sops-nix home-manager nix-openclaw;
+      };
 
       # Scan boxes/ for directories containing box.toml
       boxEntries = builtins.readDir ./boxes;
@@ -33,7 +36,6 @@
       mkSystem = boxName:
         let
           cfg = loadConfig ./boxes/${boxName}/box.toml;
-          # Auto-derive sops path when not explicitly set
           sopsFile =
             if cfg.sops.defaultSopsFile != ""
             then cfg.sops.defaultSopsFile
@@ -47,30 +49,46 @@
           value = nixpkgs.lib.nixosSystem {
             system = finalCfg.system;
             specialArgs = { inherit self inputs nix-openclaw; cfg = finalCfg; };
-            modules = [
-              disko.nixosModules.disko
-              sops-nix.nixosModules.sops
-              home-manager.nixosModules.home-manager
-              ./modules/disko.nix
-              ./modules/hardware.nix
-              ./modules/system.nix
-              ./modules/users.nix
-              ./modules/containers.nix
-              ./modules/home/dev-tools.nix
-              ./modules/home/openclaw.nix
-              {
-                nixpkgs.overlays = [ nix-openclaw.overlays.default ];
-                home-manager.useGlobalPkgs = true;
-                home-manager.useUserPackages = true;
-                home-manager.backupFileExtension = "bak";
-              }
-            ];
+            modules = moduleList;
           };
+        };
+
+      allSystems = [
+        "x86_64-linux"
+        "aarch64-linux"
+        "x86_64-darwin"
+        "aarch64-darwin"
+      ];
+
+      mkBootstrapApp = system:
+        let
+          pkgs = nixpkgs.legacyPackages.${system};
+          bootstrapScript = pkgs.writeShellScript "openclaw-box" ''
+            if [ "''${1:-}" = "bootstrap" ]; then
+              exec ${pkgs.bash}/bin/bash ${./bootstrap.sh}
+            else
+              echo "Usage: nix run github:andreabadesso/openclaw-box -- bootstrap"
+              echo ""
+              echo "Commands:"
+              echo "  bootstrap  Scaffold a new openclaw-box directory"
+              exit 1
+            fi
+          '';
+        in
+        {
+          type = "app";
+          program = toString bootstrapScript;
         };
     in
     {
+      lib.mkBox = import ./lib/mk-box.nix { inherit self inputs; };
+
       nixosConfigurations = builtins.listToAttrs (
         map mkSystem (builtins.attrNames boxDirs)
       );
+
+      apps = lib.genAttrs allSystems (system: {
+        default = mkBootstrapApp system;
+      });
     };
 }
