@@ -61,6 +61,7 @@ boxSelf: boxDir:
           nix shell nixpkgs#nixos-rebuild -c nixos-rebuild switch \
           --flake ".#${hostname}" \
           --target-host "root@$TARGET_IP" \
+          --build-host "root@$TARGET_IP" \
           --sudo
       '';
 
