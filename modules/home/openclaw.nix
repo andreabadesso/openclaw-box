@@ -50,6 +50,10 @@ in
               tokenFile = openclawCfg.telegram.tokenFile;
               allowFrom = openclawCfg.telegram.allowFrom;
             };
+            channels.slack = {
+              inherit (openclawCfg.slack) enabled groupPolicy streaming;
+              markdown = { inherit (openclawCfg.slack.markdown) tables; };
+            };
           };
         };
       };

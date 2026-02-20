@@ -58,6 +58,14 @@
       tokenFile = "";
       allowFrom = [];
     };
+    slack = {
+      enabled = false;
+      groupPolicy = "open";
+      streaming = false;
+      markdown = {
+        tables = "code";
+      };
+    };
     env = {};
   };
 }
