@@ -53,6 +53,7 @@ let
     domain = "";
     volumes = [];
     env = {};
+    models = [];
   };
 
   mergeContainer = container: deepMerge containerDefaults container;
