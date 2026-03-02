@@ -66,6 +66,13 @@
     env = {};
   };
 
+  ollama = {
+    enable = false;
+    models = [];
+    host = "127.0.0.1";
+    port = 11434;
+  };
+
   proxy = {
     email = "";
   };

@@ -70,15 +70,12 @@ allowFrom = [123456789]  # Your Telegram user ID
 [openclaw.env]
 KIMI_API_KEY = "/run/secrets/kimi_api_key"
 
-# --- Containers ---
-# Containers with a `models` list will auto-pull those models on first boot
-# via a oneshot systemd service (useful for Ollama).
-# [[containers]]
-# name    = "ollama"
-# image   = "ollama/ollama:latest"
-# port    = 11434
-# volumes = ["/var/lib/ollama:/root/.ollama"]
-# models  = ["qwen3.5:4b"]
+# --- Ollama (native, no Docker) ---
+# [ollama]
+# enable = true
+# models = ["qwen3.5:4b"]       # Auto-pulled on first boot
+# host   = "127.0.0.1"          # optional, default "127.0.0.1"
+# port   = 11434                # optional, default 11434
 
 # --- Static files ---
 # Copy files from the repo to /etc/ on the target machine.
