@@ -69,3 +69,11 @@ tokenFile = "/run/secrets/telegram_bot_token"
 allowFrom = [123456789]  # Your Telegram user ID
 [openclaw.env]
 KIMI_API_KEY = "/run/secrets/kimi_api_key"
+
+# --- Static files ---
+# Copy files from the repo to /etc/ on the target machine.
+# Source paths are relative to the repo root. Target paths are absolute.
+# [[files]]
+# source = "config/openclaw.json"
+# target = "/etc/myapp/openclaw.json"
+# mode   = "0644"                      # optional, default "0644"

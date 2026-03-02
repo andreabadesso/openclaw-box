@@ -57,6 +57,14 @@ let
 
   mergeContainer = container: deepMerge containerDefaults container;
 
+  fileDefaults = {
+    source = "";
+    target = "";
+    mode = "0644";
+  };
+
+  mergeFile = file: deepMerge fileDefaults file;
+
 in
 tomlPath:
   let
@@ -66,4 +74,5 @@ tomlPath:
   merged // {
     users = map mergeUser merged.users;
     containers = map mergeContainer merged.containers;
+    files = map mergeFile merged.files;
   }

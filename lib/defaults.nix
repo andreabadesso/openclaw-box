@@ -71,4 +71,6 @@
   };
 
   containers = [];
+
+  files = [];
 }

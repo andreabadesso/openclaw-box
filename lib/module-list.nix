@@ -9,6 +9,7 @@
   "${self}/modules/system.nix"
   "${self}/modules/users.nix"
   "${self}/modules/containers.nix"
+  "${self}/modules/files.nix"
   "${self}/modules/home/dev-tools.nix"
   "${self}/modules/home/openclaw.nix"
   {
