@@ -8,6 +8,7 @@
   "${self}/modules/hardware.nix"
   "${self}/modules/system.nix"
   "${self}/modules/users.nix"
+  "${self}/modules/services.nix"
   "${self}/modules/containers.nix"
   "${self}/modules/files.nix"
   "${self}/modules/ollama.nix"

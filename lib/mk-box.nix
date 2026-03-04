@@ -16,7 +16,7 @@ let
   ];
 
 in
-boxSelf: boxDir:
+boxSelf: boxDir: { packages ? {} }:
   let
     cfg = loadConfig (boxDir + "/box.toml");
     sopsFile =
@@ -70,7 +70,7 @@ boxSelf: boxDir:
       system = targetSystem;
       specialArgs = {
         self = boxSelf;
-        inherit inputs nix-openclaw;
+        inherit inputs nix-openclaw packages;
         cfg = finalCfg;
       };
       modules = moduleList;

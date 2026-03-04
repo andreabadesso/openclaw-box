@@ -79,5 +79,7 @@
 
   containers = [];
 
+  services = [];
+
   files = [];
 }

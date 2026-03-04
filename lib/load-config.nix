@@ -57,6 +57,19 @@ let
 
   mergeContainer = container: deepMerge containerDefaults container;
 
+  serviceDefaults = {
+    name = "";
+    package = "";
+    command = "";
+    port = 0;
+    env = {};
+    secretEnv = {};
+    after = [];
+    user = "root";
+  };
+
+  mergeService = service: deepMerge serviceDefaults service;
+
   fileDefaults = {
     source = "";
     target = "";
@@ -74,5 +87,6 @@ tomlPath:
   merged // {
     users = map mergeUser merged.users;
     containers = map mergeContainer merged.containers;
+    services = map mergeService merged.services;
     files = map mergeFile merged.files;
   }
